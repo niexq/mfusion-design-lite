@@ -1,5 +1,5 @@
 {
-  "vite": true,
+  "vite": false,
   "plugins": [
     [
       "build-plugin-moment-locales",
@@ -15,5 +15,6 @@
         "libraryName": "@alifd/next"
       }
     ]
-  ]
+  ],
+  "publicPath": "./"
 }
