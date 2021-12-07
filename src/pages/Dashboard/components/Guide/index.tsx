@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Button } from '@alifd/next';
 import styles from './index.module.css';
 
