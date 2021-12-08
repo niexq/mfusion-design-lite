@@ -4,15 +4,17 @@
   "description": "轻量级模板，使用 TypeScript，仅包含基础的 Layout。",
   "dependencies": {
     "@alifd/next": "^1.19.4",
+    "@alifd/theme-design-pro": "0.x",
     "moment": "^2.24.0",
+    "querystring": "^0.2.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "@alifd/theme-design-pro": "0.x"
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@iceworks/spec": "^1.0.0",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
+    "build-plugin-esbuild": "^1.6.2",
     "build-plugin-ignore-style": "^0.1.0",
     "build-plugin-moment-locales": "^0.1.0",
     "eslint": "^7.30.0",
@@ -21,8 +23,9 @@
     "stylelint": "^13.2.0"
   },
   "scripts": {
-    "start": "icejs start",
-    "build": "icejs build",
+    "start": "icejs start --mode local",
+    "build:dev": "icejs build --mode dev",
+    "build": "icejs build --mode prod",
     "docs:build": "icejs build",
     "docs:deploy": "gh-pages -d build",
     "lint": "npm run eslint && npm run stylelint",

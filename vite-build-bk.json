@@ -1,5 +1,5 @@
 {
-  "vite": false,
+  "vite": true,
   "plugins": [
     [
       "build-plugin-moment-locales",
@@ -16,6 +16,7 @@
       }
     ]
   ],
+  "publicPath": "./",
   "modeConfig": {
     "local": {
       "define": {},
@@ -23,11 +24,13 @@
     },
     "dev": {
       "define": {},
-      "vendor": true
+      "vendor": true,
+      "plugins": ["build-plugin-esbuild"]
     },
     "prod": {
       "define": {},
-      "vendor": true
+      "vendor": true,
+      "plugins": ["build-plugin-esbuild"]
     }
   }
 }
