@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Input, Message, Form, Divider, Checkbox, Icon } from '@alifd/next';
-
+import { history, getSearchParams, useAuth } from 'ice';
+import { postLoginAPI } from '@/services/user';
+import store from '@/store';
+import { getUserAPI } from '@/services/user';
 import { useInterval } from './utils';
 import styles from './index.module.scss';
 
@@ -30,8 +33,9 @@ interface LoginProps {
 const LoginBlock: React.FunctionComponent<LoginProps> = (
   props = { dataSource: DEFAULT_DATA },
 ): JSX.Element => {
+  const [auth, setAuth] = useAuth();
   const { dataSource = DEFAULT_DATA } = props;
-
+  const [userState, userDispatchers] = store.useModel('user');
   const [postData, setValue] = useState(dataSource);
 
   const [isRunning, checkRunning] = useState(false);
@@ -67,7 +71,46 @@ const LoginBlock: React.FunctionComponent<LoginProps> = (
       return;
     }
     console.log('values:', values);
-    Message.success('登录成功');
+    const body: API.ILoginParams = {};
+    if (isPhone) {
+      // {autoLogin: false, phone: '18657110319', code: '12334556'}
+      body.phone = values.phone;
+      body.code = values.code;
+    } else {
+      // {autoLogin: false, name: 'asdf', password: '222'}
+      body.account = values.name;
+      body.password = values.password;
+    }
+    body.autoLogin = values.autoLogin;
+    postLoginAPI(body).then((res: API.IResponse) => {
+      if (res?.code === 0) {
+        Message.success('登录成功');
+        localStorage.setItem('TOKEN', res?.data ?? '');
+        // userDispatchers.fetchUserProfile(); // TODO暂时注释用户信息存store的方式
+        setAuth({ isLogin: true });
+        getUserAPI().then((res: API.IResponse) => {
+          if (res.code === 0) {
+            const dataRes: API.IUserResult = res.data as API.IUserResult;
+            setTimeout(() => {
+              setAuth({
+                isLogin: true,
+                currentUser: {
+                  name: dataRes?.accountName ?? '-',
+                  department: '',
+                  avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+                  userId: dataRes?.userId ?? '-',
+                }
+              });
+            }, 300)
+          }
+        })
+         /** 此方法会跳转到 redirect 参数所在的位置 */
+         if (!history) return;
+         const searchParams = getSearchParams?.()  as { redirect: string };
+         history.push(searchParams?.redirect ?? '/');
+        return;
+      }
+    })
   };
 
   const phoneForm = (
@@ -169,6 +212,7 @@ const LoginBlock: React.FunctionComponent<LoginProps> = (
           <Item style={{ marginBottom: 10 }}>
             <Form.Submit
               type="primary"
+              htmlType="submit"
               onClick={handleSubmit}
               className={styles.submitBtn}
               validate

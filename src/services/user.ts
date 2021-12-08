@@ -1,29 +1,36 @@
 import { request } from 'ice';
 
-export default {
-  // 简单场景
-  async getUser() {
-    return await request('/api/user');
-  },
+// 简单场景
+export async function getUserAPI() {
+  return await request('/api/user');
+}
 
-  // 参数场景
-  async getRepo(id) {
-    return await request(`/api/repo/${id}`);
-  },
+/** 登录接口 POST /api/login/account */
+export async function postLoginAPI(body: API.ILoginParams) {
+  return await request<API.IResponse>({
+    url: '/api/login',
+    method: 'post',
+    data: body,
+  });
+}
 
-  // 格式化返回值
-  async getDetail(params) {
-    const data = await request({
-      url: `/api/detail`,
-      params
-    });
+// 参数场景
+export async function getRepoAPI(id) {
+  return await request(`/api/repo/${id}`);
+}
 
-    return data.map(item => {
-      return {
-        ...item,
-        price: item.oldPrice,
-        text: item.status === '1' ? '确定' : '取消'
-      };
-    });
-  }
+// 格式化返回值
+export async function getDetail(params) {
+  const data = await request({
+    url: `/api/detail`,
+    params
+  });
+
+  return data.map(item => {
+    return {
+      ...item,
+      price: item.oldPrice,
+      text: item.status === '1' ? '确定' : '取消'
+    };
+  });
 }
